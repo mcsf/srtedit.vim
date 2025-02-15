@@ -1,0 +1,7 @@
+command! -nargs=1 -complete=file SrtEditStart  call srtedit#Start(<q-args>)
+command! SrtEditPause                          call srtedit#Pause()
+command! SrtEditRewind                         call srtedit#Rewind()
+command! SrtEditForward                        call srtedit#Forward()
+command! SrtEditJump                           call srtedit#Jump()
+command! SrtEditAdd                            call srtedit#Add()
+command! SrtEditIndex                          call srtedit#Index()
