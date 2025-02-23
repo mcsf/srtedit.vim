@@ -31,4 +31,5 @@ Usage
 * Run `:SrtEditStart some-video.mp4`
 * Navigate through the subtitles as through any text file
 * Place the cursor over a subtitle and press `<leader><cr>` to jump in the video feed to that subtitle, for example
+    * If you haven't configured your `<leader>` key, set it in `~.vimrc` with `let mapleader = " "`
 * See all bindings in `ftplugin/srt.vim`
