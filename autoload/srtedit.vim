@@ -65,7 +65,7 @@ endfunction
 
 " Convert a duration in seconds to a timecode string
 function! s:ToTimestamp(time)
-	let ms = float2nr(100 * (a:time - float2nr(a:time)))
+	let ms = float2nr(1000 * (a:time - float2nr(a:time)))
 	let time = float2nr(a:time)
 	let s = time % 60
 	let m = time / 60
