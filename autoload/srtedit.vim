@@ -75,6 +75,21 @@ function! s:ToTimestamp(time)
 	return printf('%02d:%02d:%02d,%03d', h, m, s, ms)
 endfunction
 
+" Convert a timecode string to a duration in milliseconds
+function! s:ToMilliseconds(timestamp)
+  let match = matchlist(a:timestamp, '\v^(\d{2}):(\d{2}):(\d{2}),(\d{3})$')
+  if empty(match)
+    throw 'Invalid timestamp format'
+  endif
+
+  let hours = str2nr(match[1])
+  let minutes = str2nr(match[2])
+  let seconds = str2nr(match[3])
+  let ms = str2nr(match[4])
+
+  return hours * 3600000 + minutes * 60000 + seconds * 1000 + ms
+endfunction
+
 " Pause or resume MPV playback
 function! srtedit#Pause()
 	call s:Send(["cycle", "pause"])
@@ -115,6 +130,13 @@ function! srtedit#Jump()
 
 	" Restore position
 	call setpos('.', pos)
+endfunction
+
+" Increment or decrement the current timestamp by 'count' milliseconds.
+function! srtedit#Increment(count=100)
+	let ms = s:ToMilliseconds(expand("<cWORD>"))
+	let ts = s:ToTimestamp((ms + a:count))
+	execute 'normal ciW' . ts
 endfunction
 
 " Reindex all records in the buffer, starting at 1.
@@ -165,4 +187,3 @@ function! srtedit#Add()
 
 	endif
 endfunction
-
