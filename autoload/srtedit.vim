@@ -63,12 +63,13 @@ function! s:Get(property)
 	endif
 endfunction
 
-" Convert a duration in seconds to a timecode string
+" Convert a duration in milliseconds to a timecode string
 function! s:ToTimestamp(time)
-	let ms = float2nr(1000 * (a:time - float2nr(a:time)))
 	let time = float2nr(a:time)
-	let s = time % 60
-	let m = time / 60
+	let ms = time % 1000
+	let s = time / 1000
+	let m = s / 60
+	let s = s % 60
 	let h = m / 60
 	let m = m % 60
 	return printf('%02d:%02d:%02d,%03d', h, m, s, ms)
@@ -144,7 +145,7 @@ endfunction
 " capture MPV's timecodes.
 function! srtedit#Add()
 	let line = getline('.')
-	let time = s:ToTimestamp(s:Get('time-pos'))
+	let time = s:ToTimestamp(s:Get('time-pos') * 1000)
 
 	" Insert new record in place
 	if line =~ '^$'
