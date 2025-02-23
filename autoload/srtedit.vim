@@ -64,7 +64,7 @@ function! s:Get(property)
 endfunction
 
 " Convert a duration in milliseconds to a timecode string
-function! s:ToTimestamp(time)
+function! s:ToTimecode(time)
 	let time = float2nr(a:time)
 	let ms = time % 1000
 	let s = time / 1000
@@ -76,10 +76,10 @@ function! s:ToTimestamp(time)
 endfunction
 
 " Convert a timecode string to a duration in milliseconds
-function! s:ToMilliseconds(timestamp)
-  let match = matchlist(a:timestamp, '\v^(\d{2}):(\d{2}):(\d{2}),(\d{3})$')
+function! s:ToMilliseconds(timecode)
+  let match = matchlist(a:timecode, '\v^(\d{2}):(\d{2}):(\d{2}),(\d{3})$')
   if empty(match)
-    throw 'Invalid timestamp format'
+    throw 'Invalid timecode format'
   endif
 
   let hours = str2nr(match[1])
@@ -112,7 +112,7 @@ function! srtedit#Jump()
 	call s:Send(["sub-clear"])
 	call s:Send(["sub-add", bufname()])
 
-	" Jump to record's timestamp
+	" Jump to record's timecode
 	let pos = getpos('.')
 	call search('\v^$', 'b')
 	call search('\v\d{2}:')
@@ -132,10 +132,10 @@ function! srtedit#Jump()
 	call setpos('.', pos)
 endfunction
 
-" Increment or decrement the current timestamp by 'count' milliseconds.
+" Increment or decrement the current timecode by 'count' milliseconds.
 function! srtedit#Increment(count=100)
 	let ms = s:ToMilliseconds(expand("<cWORD>"))
-	let ts = s:ToTimestamp((ms + a:count))
+	let ts = s:ToTimecode((ms + a:count))
 	execute 'normal ciW' . ts
 endfunction
 
@@ -167,14 +167,14 @@ endfunction
 " capture MPV's timecodes.
 function! srtedit#Add()
 	let line = getline('.')
-	let time = s:ToTimestamp(s:Get('time-pos') * 1000)
+	let time = s:ToTimecode(s:Get('time-pos') * 1000)
 
 	" Insert new record in place
 	if line =~ '^$'
 		call append('.', ['0', printf('%s --> ', time), '', ''])
 		+2
 
-	" Finish record timestamp
+	" Finish record timecode
 	elseif line =~ '\v(\d{2}):(\d{2}):(\d{2}),(\d{3}) --\> $'
 		call setline(line('.'), line . time)
 		+1
